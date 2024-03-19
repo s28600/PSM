@@ -1,14 +1,12 @@
 package C02;
 
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,9 +20,10 @@ public class Main {
         double m = 1;
         double Cx = 0.47;
 
-        System.out.print("Would you like to provide initial data yourself?" +
-                "\nOtherwise standard configuration will be used." +
-                "\nPlease enter (y/n): ");
+        System.out.print("""
+                Would you like to provide initial data yourself?
+                Otherwise standard configuration will be used.
+                Please enter (y/n):\s""");
         if (scanner.next().equals("y")){
             System.out.print("Enter starting position x: ");
             Sx = scanner.nextDouble();
@@ -43,19 +42,33 @@ public class Main {
             System.out.println("Data accepted.");
         } else System.out.println("Standard configuration will be used.");
 
-        List<List<Double>> standardEuler = standardEuler(0, 0, 7, 7, 0, 0.05, 0, -9.81, 1, 0.47);
-        List<Double> time = standardEuler.get(0);
-        List<Double> xValues = standardEuler.get(1);
-        List<Double> yValues = standardEuler.get(2);
+        List<List<Double>> standardEuler = standardEuler(Sx, Sy, Vx, Vy, t, dt, gx, gy, m, Cx);
+        List<Double> sEtime = standardEuler.get(0);
+        List<Double> sExValues = standardEuler.get(1);
+        List<Double> sEyValues = standardEuler.get(2);
+
+        List<List<Double>> enhancedEuler = enhancedEuler(Sx, Sy, Vx, Vy, t, dt, gx, gy, m, Cx);
+        List<Double> eEtime = enhancedEuler.get(0);
+        List<Double> eExValues = enhancedEuler.get(1);
+        List<Double> eEyValues = enhancedEuler.get(2);
 
         Path outputFilePath = Paths.get("data.csv");
         Files.deleteIfExists(outputFilePath);
         Files.createFile(outputFilePath);
         BufferedWriter writer = new BufferedWriter(new FileWriter("data.csv", true));
 
-        writer.append("Standard Euler,,\nt,x,y\n");
-        for (int i = 0; i < xValues.size(); i++) {
-            writer.append(time.get(i) + "," + xValues.get(i) + "," + yValues.get(i) + "\n");
+        writer.append("Standard Euler,,,Enhanced Euler,\nt,x,y,t,x,y\n");
+        int leftoff = 0;
+        String str;
+        for (int i = 0; i < eEtime.size(); i++) {
+            str = sEtime.get(i) + "," + sExValues.get(i) + "," + sEyValues.get(i) + "," +
+                    eEtime.get(i) + "," + eExValues.get(i) + "," + eEyValues.get(i) + "\n";
+            writer.append(str);
+            if (i == eEtime.size()-1) leftoff = i+1;
+        }
+        for (int i = leftoff; i < sEtime.size(); i++) {
+            str = sEtime.get(i) + "," + sExValues.get(i) + "," + sEyValues.get(i) + "\n";
+            writer.append(str);
         }
         writer.close();
 
@@ -74,13 +87,6 @@ public class Main {
             double m,
             double Cx
     ){
-        double ax = (m*gx-Cx*Vx)/m; //x-axis acceleration
-        double ay = (m*gy-Cx*Vy)/m; //y-axis acceleration
-        double dSx = Vx*dt; //Change of speed in x-axis
-        double dSy = Vy*dt; //Change of speed in y-axis
-        double dVx = ax*dt; //Change of x-axis acceleration
-        double dVy = ay*dt; //Change of y-axis acceleration
-
         List<Double> xValues = new ArrayList<>();
         List<Double> yValues = new ArrayList<>();
         List<Double> time = new ArrayList<>();
@@ -88,14 +94,64 @@ public class Main {
         yValues.add(Sy);
         time.add(t);
 
+        double ax = (m*gx-Cx*Vx)/m; //x-axis acceleration in t=0
+        double ay = (m*gy-Cx*Vy)/m; //y-axis acceleration in t=0
+        double dVx = ax*dt; //Change of speed in x-axis
+        double dVy = ay*dt; //Change of speed in y-axis
+
         while (Sy >= 0) {
             t += dt;
-            Sx += dSx;
-            Sy += dSy;
+            Sx += Vx*dt;
+            Sy += Vy*dt;
             Vx += dVx;
             Vy += dVy;
-            dSx = Vx*dt;
-            dSy = Vy*dt;
+            ax = (m*gx-Cx*Vx)/m;
+            ay = (m*gy-Cx*Vy)/m;
+            dVx = ax*dt;
+            dVy = ay*dt;
+
+            time.add(t);
+            xValues.add(Sx);
+            yValues.add(Sy);
+        }
+
+        List<List<Double>> out = new ArrayList<>();
+        out.add(time);
+        out.add(xValues);
+        out.add(yValues);
+        return out;
+    }
+
+    public static List<List<Double>> enhancedEuler(
+            double Sx,
+            double Sy,
+            double Vx,
+            double Vy,
+            double t,
+            double dt,
+            double gx,
+            double gy,
+            double m,
+            double Cx
+    ){
+        List<Double> xValues = new ArrayList<>();
+        List<Double> yValues = new ArrayList<>();
+        List<Double> time = new ArrayList<>();
+        xValues.add(Sx);
+        yValues.add(Sy);
+        time.add(t);
+
+        double ax = (m*gx-Cx*Vx)/m; //x-axis acceleration in t=0
+        double ay = (m*gy-Cx*Vy)/m; //y-axis acceleration in t=0
+        double dVx = ax*dt/2; //Change of speed in x-axis
+        double dVy = ay*dt/2; //Change of speed in y-axis
+
+        while (Sy >= 0) {
+            t += dt;
+            Vx += dVx;
+            Vy += dVy;
+            Sx += Vx*dt;
+            Sy += Vy*dt;
             ax = (m*gx-Cx*Vx)/m;
             ay = (m*gy-Cx*Vy)/m;
             dVx = ax*dt;
