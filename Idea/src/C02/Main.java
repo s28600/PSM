@@ -50,10 +50,12 @@ public class Main {
         double dVy = ay*dt; //Change of y-axis acceleration
         List<Double> xValues = new ArrayList<>();
         List<Double> yValues = new ArrayList<>();
+        List<Double> time = new ArrayList<>();
         xValues.add(Sx);
         yValues.add(Sy);
+        time.add(t);
 
-        //System.out.println(t + " " + Sx + " " + Sy + " " + Vx + " " + Vy + " " + dSx + " " + dSy + " " + dVx + " " + dVy + " " + ax + " " + ay);
+        //Standard Euler
 
         while (Sy >= 0) {
             t += dt;
@@ -68,6 +70,7 @@ public class Main {
             dVx = ax*dt;
             dVy = ay*dt;
 
+            time.add(t);
             xValues.add(Sx);
             yValues.add(Sy);
         }
@@ -77,12 +80,12 @@ public class Main {
         Files.createFile(outputFilePath);
         BufferedWriter writer = new BufferedWriter(new FileWriter("data.csv", true));
 
-        writer.append("Standard Euler,\nx,y\n");
+        writer.append("Standard Euler,,\nt,x,y\n");
         for (int i = 0; i < xValues.size(); i++) {
-            writer.append(xValues.get(i) + "," + yValues.get(i) + "\n");
+            writer.append(time.get(i) + "," + xValues.get(i) + "," + yValues.get(i) + "\n");
         }
         writer.close();
-
+        
         System.out.print("Trajectory data was written to file, path: " + outputFilePath.toAbsolutePath());
     }
 }
