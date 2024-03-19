@@ -77,11 +77,12 @@ public class Main {
         Files.createFile(outputFilePath);
         BufferedWriter writer = new BufferedWriter(new FileWriter("data.csv", true));
 
+        writer.append("Standard Euler,\nx,y\n");
         for (int i = 0; i < xValues.size(); i++) {
-            writer.append(xValues.get(i) + ";" + yValues.get(i) + "\n");
+            writer.append(xValues.get(i) + "," + yValues.get(i) + "\n");
         }
         writer.close();
 
-        System.out.print("Trajectory data was written to file, path: " + outputFilePath);
+        System.out.print("Trajectory data was written to file, path: " + outputFilePath.toAbsolutePath());
     }
 }
