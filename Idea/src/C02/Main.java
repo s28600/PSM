@@ -1,9 +1,18 @@
 package C02;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         double Sx = 0, Sy = 0;
         double Vx = 7, Vy = 7;
@@ -39,12 +48,40 @@ public class Main {
         double dSy = Vy*dt; //Change of speed in y-axis
         double dVx = ax*dt; //Change of x-axis acceleration
         double dVy = ay*dt; //Change of y-axis acceleration
+        List<Double> xValues = new ArrayList<>();
+        List<Double> yValues = new ArrayList<>();
+        xValues.add(Sx);
+        yValues.add(Sy);
 
-        int i = 0;
-        while (i<1) {
-            System.out.println(t + " " + Sx + " " + Sy + " " + Vx + " " + Vy + " " + dSx + " " + dSy + " " +
-                    dVx + " " + dVy + " " + ax + " " + ay);
-            i++;
+        //System.out.println(t + " " + Sx + " " + Sy + " " + Vx + " " + Vy + " " + dSx + " " + dSy + " " + dVx + " " + dVy + " " + ax + " " + ay);
+
+        while (Sy >= 0) {
+            t += dt;
+            Sx += dSx;
+            Sy += dSy;
+            Vx += dVx;
+            Vy += dVy;
+            dSx = Vx*dt;
+            dSy = Vy*dt;
+            ax = (m*gx-Cx*Vx)/m;
+            ay = (m*gy-Cx*Vy)/m;
+            dVx = ax*dt;
+            dVy = ay*dt;
+
+            xValues.add(Sx);
+            yValues.add(Sy);
         }
+
+        Path outputFilePath = Paths.get("data.csv");
+        Files.deleteIfExists(outputFilePath);
+        Files.createFile(outputFilePath);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("data.csv", true));
+
+        for (int i = 0; i < xValues.size(); i++) {
+            writer.append(xValues.get(i) + ";" + yValues.get(i) + "\n");
+        }
+        writer.close();
+
+        System.out.print("Trajectory data was written to file, path: " + outputFilePath);
     }
 }
