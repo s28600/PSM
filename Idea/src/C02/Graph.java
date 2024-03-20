@@ -81,17 +81,17 @@ public class Graph extends JPanel {
         }
 
         // and for x axis
-        for (int i = 0; i < sEyValues.size(); i++) {
-            if (sEyValues.size() > 1) {
-                int x0 = i * (getWidth() - padding * 2 - labelPadding) / (sEyValues.size() - 1) + padding + labelPadding;
+        for (int i = 0; i < sExValues.size(); i++) {
+            if (sExValues.size() > 1) {
+                int x0 = i * (getWidth() - padding * 2 - labelPadding) / (sExValues.size() - 1) + padding + labelPadding;
                 int x1 = x0;
                 int y0 = getHeight() - padding - labelPadding;
                 int y1 = y0 - pointWidth;
-                if ((i % ((int) ((sEyValues.size() / 20.0)) + 1)) == 0) {
+                if ((i % ((int) ((sExValues.size() / 20.0)) + 1)) == 0) {
                     g2.setColor(gridColor);
                     g2.drawLine(x0, getHeight() - padding - labelPadding - 1 - pointWidth, x1, padding);
                     g2.setColor(Color.BLACK);
-                    String xLabel = i + "";
+                    String xLabel = (double)((int)(sExValues.get(i)*100))/100 + "";
                     FontMetrics metrics = g2.getFontMetrics();
                     int labelWidth = metrics.stringWidth(xLabel);
                     g2.drawString(xLabel, x0 - labelWidth / 2, y0 + metrics.getHeight() + 3);
