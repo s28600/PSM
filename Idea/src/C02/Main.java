@@ -49,19 +49,20 @@ public class Main {
         List<Double> sExValues = standardEuler.get(1);
         List<Double> sEyValues = standardEuler.get(2);
 
-        List<Double> test = new ArrayList<>(sEyValues);
-
-        testFrame = new JFrame();
-        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        Graph graph = new Graph(test);
-        testFrame.add(graph);
-        testFrame.setBounds(100, 100, 764, 470);
-        testFrame.setVisible(true);
-
         List<List<Double>> enhancedEuler = enhancedEuler(Sx, Sy, Vx, Vy, t, dt, gx, gy, m, Cx);
         List<Double> eEtime = enhancedEuler.get(0);
         List<Double> eExValues = enhancedEuler.get(1);
         List<Double> eEyValues = enhancedEuler.get(2);
+
+        //==========================================================================================
+        //Testing graph creating
+        testFrame = new JFrame();
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Graph graph = new Graph(sEyValues, eEyValues, sExValues, eExValues);
+        testFrame.add(graph);
+        testFrame.setBounds(100, 100, 764, 470);
+        testFrame.setVisible(true);
+        //==========================================================================================
 
         Path outputFilePath = Paths.get("data.csv");
         Files.deleteIfExists(outputFilePath);
