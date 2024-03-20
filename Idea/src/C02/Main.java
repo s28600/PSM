@@ -1,5 +1,7 @@
 package C02;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    static JFrame testFrame;
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         double Sx = 0, Sy = 0;
@@ -51,6 +54,21 @@ public class Main {
         List<Double> eEtime = enhancedEuler.get(0);
         List<Double> eExValues = enhancedEuler.get(1);
         List<Double> eEyValues = enhancedEuler.get(2);
+
+        //==========================================================================================
+        //Testing graph creating
+        testFrame = new JFrame();
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Panel p = new Panel();
+        p.setLayout(new BorderLayout());
+        JLabel label = new JLabel("Standard Euler - orange, Enhanced Euler - green");
+        p.add(label, BorderLayout.NORTH);
+        Graph graph = new Graph(sEyValues, eEyValues, sExValues, eExValues);
+        p.add(graph, BorderLayout.CENTER);
+        testFrame.add(p);
+        testFrame.setBounds(100, 100, 764, 470);
+        testFrame.setVisible(true);
+        //==========================================================================================
 
         Path outputFilePath = Paths.get("data.csv");
         Files.deleteIfExists(outputFilePath);
