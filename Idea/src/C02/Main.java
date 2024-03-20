@@ -1,6 +1,7 @@
 package C02;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -58,8 +59,13 @@ public class Main {
         //Testing graph creating
         testFrame = new JFrame();
         testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Panel p = new Panel();
+        p.setLayout(new BorderLayout());
+        JLabel label = new JLabel("Standard Euler - orange, Enhanced Euler - green");
+        p.add(label, BorderLayout.NORTH);
         Graph graph = new Graph(sEyValues, eEyValues, sExValues, eExValues);
-        testFrame.add(graph);
+        p.add(graph, BorderLayout.CENTER);
+        testFrame.add(p);
         testFrame.setBounds(100, 100, 764, 470);
         testFrame.setVisible(true);
         //==========================================================================================
