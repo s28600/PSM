@@ -1,5 +1,6 @@
 package C02;
 
+import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
+    static JFrame testFrame;
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         double Sx = 0, Sy = 0;
@@ -46,6 +48,15 @@ public class Main {
         List<Double> sEtime = standardEuler.get(0);
         List<Double> sExValues = standardEuler.get(1);
         List<Double> sEyValues = standardEuler.get(2);
+
+        List<Double> test = new ArrayList<>(sEyValues);
+
+        testFrame = new JFrame();
+        testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        Graph graph = new Graph(test);
+        testFrame.add(graph);
+        testFrame.setBounds(100, 100, 764, 470);
+        testFrame.setVisible(true);
 
         List<List<Double>> enhancedEuler = enhancedEuler(Sx, Sy, Vx, Vy, t, dt, gx, gy, m, Cx);
         List<Double> eEtime = enhancedEuler.get(0);
