@@ -88,8 +88,8 @@ public class Main {
         while(t<10) {
             t += dt;
             e = g/l*Math.sin(a);
-            a += w*dt;
             w += e*dt;
+            a += w*dt;
 
             data.add(t+","+a+","+w+","+Ec(l,w,a));
         }
@@ -115,7 +115,7 @@ public class Main {
         double y = -l*Math.sin(Math.PI/2-a);
         double v = w*l;
         double h = y+l;
-        double Ep = 9.81*h;
+        double Ep = Math.abs(-9.81*h);
         double Ek = Math.pow(v, 2)/2;
         double Ec = Ep+Ek;
 
