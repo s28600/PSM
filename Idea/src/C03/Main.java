@@ -1,9 +1,17 @@
 package C03;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         double a = Math.toRadians(45);
         double w = 0, t = 0, dt = 0.004, l = 1, g = -9.81;
@@ -20,25 +28,51 @@ public class Main {
             System.out.println("Data accepted.");
         } else System.out.println("Standard configuration will be used.");
 
-        double e = g/l*Math.sin(a);
-        double da = derivativeA(w, dt);
-        double dw = derivativeW(e, dt);
+        List<String> euler = euler(a, w, t, dt, l, g);
 
-        while(t<20){
-            t+=dt;
-            a+=da;
-            w+=dw;
-            e = g/l*Math.sin(a);
-            da = derivativeA(w, dt);
-            dw = derivativeW(e, dt);
+        writeDataToFile(euler);
+    }
+
+    public static List<String> euler(
+            Double a, //starting degree
+            Double w, //starting rotational speed
+            Double t,
+            Double dt,
+            Double l,
+            Double g
+    ){
+        double da = w*dt;
+        double e = g/l*Math.sin(a); //rotational acceleration
+        double dw = e*dt;
+
+        List<String> data = new ArrayList<>();
+        data.add(t+","+a+","+w+","+e+","+da+","+dw+"\n");
+
+        while(t<20) {
+            t += dt;
+            a += da;
+            w += dw;
+            e = g / l * Math.sin(a);
+            da = w*dt/2;
+            dw = e*dt;
+
+            data.add(t+","+a+","+w+","+e+","+da+","+dw+"\n");
         }
+
+        return data;
     }
 
-    public static double derivativeA(double w, double dt){
-        return w*dt;
-    }
+    public static void writeDataToFile(List<String> data) throws IOException {
+        Path outputFilePath = Paths.get("data.csv");
+        Files.deleteIfExists(outputFilePath);
+        Files.createFile(outputFilePath);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("data.csv", true));
 
-    public static double derivativeW(double e, double dt){
-        return e*dt;
+        for (String str : data) {
+            writer.append(str);
+        }
+
+        writer.close();
+        System.out.print("Trajectory data was written to file, path: " + outputFilePath.toAbsolutePath());
     }
 }

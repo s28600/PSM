@@ -33,7 +33,7 @@ public class Graph extends JPanel {
         this.sExValues = sExValues;
         this.eExValues = eExValues;
 
-        numberYDivisions = Math.max(sEyValues.size(), eEyValues.size());
+        numberYDivisions = Math.max(sEyValues.size(), eEyValues.size())/2;
     }
 
     @Override
