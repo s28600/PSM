@@ -41,22 +41,16 @@ public class Main {
             Double l,
             Double g
     ){
-        double da = w*dt;
-        double e = g/l*Math.sin(a); //rotational acceleration
-        double dw = e*dt;
-
         List<String> data = new ArrayList<>();
-        data.add(t+","+a+","+w+","+e+","+da+","+dw+"\n");
+        data.add(t+","+a+","+w+"\n");
 
         while(t<20) {
             t += dt;
-            a += da;
-            w += dw;
-            e = g / l * Math.sin(a);
-            da = w*dt/2;
-            dw = e*dt;
+            double e = g/l*Math.sin(a); //rotational acceleration
+            a += w*dt;
+            w += e*dt;
 
-            data.add(t+","+a+","+w+","+e+","+da+","+dw+"\n");
+            data.add(t+","+a+","+w+"\n");
         }
 
         return data;
