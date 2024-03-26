@@ -21,7 +21,7 @@ public class Graph extends JPanel {
     private Color gridColor = new Color(200, 200, 200, 200);
     private static final Stroke GRAPH_STROKE = new BasicStroke(2f);
     private int pointWidth = 4;
-    private int numberYDivisions = 10;
+    private int numberYDivisions;
     private List<Double> sEyValues;
     private List<Double> eEyValues;
     private List<Double> sExValues;
@@ -32,6 +32,8 @@ public class Graph extends JPanel {
         this.eEyValues = eEyValues;
         this.sExValues = sExValues;
         this.eExValues = eExValues;
+
+        numberYDivisions = Math.max(sEyValues.size(), eEyValues.size());
     }
 
     @Override
@@ -155,17 +157,6 @@ public class Graph extends JPanel {
         for (Double score : eEyValues) {
             if (score > maxScore) maxScore = score;
         }
-        return maxScore*1.1;
-    }
-
-    private double getXMax() {
-        double maxScore = 0;
-        for (Double score : sEyValues) {
-            if (score > maxScore) maxScore = score;
-        }
-        for (Double score : eEyValues) {
-            if (score > maxScore) maxScore = score;
-        }
-        return maxScore*1.1;
+        return maxScore;
     }
 }
