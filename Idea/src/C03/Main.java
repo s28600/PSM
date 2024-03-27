@@ -69,22 +69,18 @@ public class Main {
         Double t = (double) 0, a = point.a, w = point.w;
         data.add(t+","+a+","+w+","+Ec(point.l, w, a));
 
-        //First cycle
-        double[] k = derivatives(a, w, point);
-        a += k[0] * dt/2;
-        w += k[1] * dt/2;
-
-        //Continuation
         while(t<10) {
             t += dt;
+
+            double[] k = derivatives(a, w, point);
+            a += k[0] * dt/2;
+            w += k[1] * dt/2;
+
             k = derivatives(a, w, point);
             a += k[0] * dt;
             w += k[1] * dt;
-            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
 
-            k = derivatives(a, w, point);
-            a += k[0] * dt/2;
-            w += k[1] * dt/2;
+            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
         }
 
         return data;
