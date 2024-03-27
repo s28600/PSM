@@ -39,7 +39,7 @@ public class Main {
         List<String> compare = new ArrayList<>();
         String str;
         for (int i = 0; i < euler.size(); i++) {
-            str = euler.get(i)+",,"+midpoint.get(i)+",,"+rk4.get(i);
+            str = euler.get(i)+";;"+midpoint.get(i)+";;"+rk4.get(i);
             compare.add(str);
         }
 
@@ -49,7 +49,7 @@ public class Main {
     public static List<String> solveEuler(Point point){
         List<String> data = new ArrayList<>();
         Double t = (double) 0, a = point.a, w = point.w;
-        data.add(t+","+a+","+w+","+Ec(point.l, w, a));
+        data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
 
         double[] k;
         while(t<10) {
@@ -58,7 +58,7 @@ public class Main {
             a += k[0] * dt;
             w += k[1] * dt;
 
-            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
+            data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
         }
 
         return data;
@@ -67,20 +67,21 @@ public class Main {
     public static List<String> solveMidpoint(Point point){
         List<String> data = new ArrayList<>();
         Double t = (double) 0, a = point.a, w = point.w;
-        data.add(t+","+a+","+w+","+Ec(point.l, w, a));
-
+        data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
+        double a_tmp;
+        double w_tmp;
         while(t<10) {
             t += dt;
 
             double[] k = derivatives(a, w, point);
-            a += k[0] * dt/2;
-            w += k[1] * dt/2;
+            a_tmp = a + k[0] * dt/2;
+            w_tmp = w + k[1] * dt/2;
 
-            k = derivatives(a, w, point);
+            k = derivatives(a_tmp, w_tmp, point);
             a += k[0] * dt;
             w += k[1] * dt;
 
-            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
+            data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
         }
 
         return data;
@@ -89,24 +90,26 @@ public class Main {
     public static List<String> solveRK4(Point point){
         List<String> data = new ArrayList<>();
         Double t = (double) 0, a = point.a, w = point.w;
-        data.add(t+","+a+","+w+","+Ec(point.l, w, a));
+        data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
 
+        double a_tmp;
+        double w_tmp;
         while(t<10) {
             t += dt;
 
             double[] k1 = derivatives(a, w, point);
-            a += k1[0] * dt/2;
-            w += k1[1] * dt/2;
+            a_tmp = a + k1[0] * dt/2;
+            w_tmp = w + k1[1] * dt/2;
 
-            double[] k2 = derivatives(a, w, point);
-            a += k2[0] * dt/2;
-            w += k2[1] * dt/2;
+            double[] k2 = derivatives(a_tmp, w_tmp, point);
+            a_tmp = a + k2[0] * dt/2;
+            w_tmp = w + k1[1] * dt/2;
 
-            double[] k3 = derivatives(a, w, point);
-            a += k3[0] * dt;
-            w += k3[1] * dt;
+            double[] k3 = derivatives(a_tmp, w_tmp, point);
+            a_tmp = a + k2[0] * dt;
+            w_tmp = w + k1[1] * dt;
 
-            double[] k4 = derivatives(a, w, point);
+            double[] k4 = derivatives(a_tmp, w_tmp, point);
 
             double ksa = (k1[0] + 2*k2[0] + 2*k3[0] + k4[0])/6;
             double ksw = (k1[1] + 2*k2[1] + 2*k3[1] + k4[1])/6;
@@ -114,7 +117,7 @@ public class Main {
             a += ksa * dt;
             w += ksw * dt;
 
-            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
+            data.add(t+";"+a+";"+w+";"+Ec(point.l, w, a));
         }
 
         return data;
