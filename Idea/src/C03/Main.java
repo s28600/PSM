@@ -12,14 +12,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    final static DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-    final static String sep = String.valueOf(dfs.getGroupingSeparator());
     final static Point point = new Point();
     final static double g = -9.81;
     static double dt = 0.004;
+    static String sep;
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        String dsep = String.valueOf(dfs.getDecimalSeparator());
+        if (dsep.equals(",")) sep = ";";
+        else sep = ",";
 
         System.out.print("""
                 Would you like to provide initial data yourself?
@@ -48,6 +51,7 @@ public class Main {
         compare.add(str+sep+sep+str+sep+sep+str);
         for (int i = 0; i < euler.size(); i++) {
             str = euler.get(i)+sep+sep+midpoint.get(i)+sep+sep+rk4.get(i);
+            str = str.replace(".", dsep);
             compare.add(str);
         }
 
