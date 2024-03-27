@@ -8,13 +8,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        double a = Math.toRadians(45);
-        double w = 0, t = 0, dt = 0.004, l = 1, g = -9.81;
+        Point point = new Point();
 
         System.out.print("""
                 Would you like to provide initial data yourself?
@@ -22,44 +22,42 @@ public class Main {
                 Please enter (y/n):\s""");
         if (scanner.next().equals("y")){
             System.out.print("Enter starting degree: ");
-            a = Math.toRadians(Double.parseDouble(scanner.next()));
+            point.a = Math.toRadians(Double.parseDouble(scanner.next()));
             System.out.print("Enter length of pendulum in meters: ");
-            l = Double.parseDouble(scanner.next());
+            point.l = Double.parseDouble(scanner.next());
+            System.out.print("Enter probing time in seconds: ");
+            point.dt = Double.parseDouble(scanner.next());
             System.out.println("Data accepted.");
         } else System.out.println("Standard configuration will be used.");
 
-        List<String> euler = euler(a, w, t, dt, l, g);
-        List<String> midpoint = midpoint(a, w, t, dt, l, g);
+        List<String> euler = euler(point);
+        writeDataToFile(euler);
+        System.out.println(point);
+        //List<String> midpoint = midpoint(a, w, t, dt, l, g);
 
         //Adding both to compare graphs
-        List<String> compare = new ArrayList<>();
+        /*List<String> compare = new ArrayList<>();
         String str;
         for (int i = 0; i < euler.size(); i++) {
             str = euler.get(i)+",,"+midpoint.get(i);
             compare.add(str);
         }
 
-        writeDataToFile(compare);
+        writeDataToFile(compare);*/
     }
 
-    public static List<String> euler(
-            Double a, //starting degree
-            Double w, //starting rotational speed
-            Double t,
-            Double dt,
-            Double l,
-            Double g
-    ){
+    public static List<String> euler(Point point){
         List<String> data = new ArrayList<>();
-        data.add(t+","+a+","+w+","+Ec(l,w,a));
+        Double t = (double) 0, a = point.a, w = point.w;
+        data.add(t+","+a+","+w+","+Ec(point.l, w, a));
 
         while(t<10) {
-            t += dt;
-            double e = g/l*Math.sin(a); //rotational acceleration
-            a += w*dt;
-            w += e*dt;
+            t += point.dt;
+            double e = point.g / point.l * Math.sin(a);
+            a += w * point.dt;
+            w += e * point.dt;
 
-            data.add(t+","+a+","+w+","+Ec(l,w,a));
+            data.add(t+","+a+","+w+","+Ec(point.l, w, a));
         }
 
         return data;
@@ -80,7 +78,7 @@ public class Main {
         t += dt;
         double e = g/l*Math.sin(a);
         w += e*dt/2;
-        a += w*dt;
+        a += w*dt/2;
 
         data.add(t+","+a+","+w+","+Ec(l,w,a));
 
@@ -97,6 +95,12 @@ public class Main {
         return data;
     }
 
+    public static List<String> RK4(Point p){
+        List<String> data = new ArrayList<>();
+
+        return data;
+    }
+
     public static void writeDataToFile(List<String> data) throws IOException {
         Path outputFilePath = Paths.get("data.csv");
         Files.deleteIfExists(outputFilePath);
@@ -109,6 +113,13 @@ public class Main {
 
         writer.close();
         System.out.print("Trajectory data was written to file, path: " + outputFilePath.toAbsolutePath());
+    }
+
+    public static double[] derivatives(double a, double w, Point p){
+        double[] out = new double[2];
+        out[0] = w;
+        out[1] = p.g/p.l*Math.sin(a);
+        return out;
     }
 
     public static double Ec(double l, double w, double a){
