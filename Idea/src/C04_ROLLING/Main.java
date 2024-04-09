@@ -47,20 +47,20 @@ public class Main {
         data.add("t"+sep+"Sx"+sep+"Sy"+sep+"Vx"+sep+"Sx_o"+sep+"Sy_o"+sep+"beta"+sep+"w"+sep+"eps"+sep+"x"+sep+"y"+sep+"Ep"+sep+"Ek"+sep+"Ec");
         data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps+sep+x+sep+y+sep+Ep+sep+Ek+sep+Ec);
 
-        double[] k;
+        double[] midpoint;
         while (Sx < d){
             t += dt;
 
-            k = derivatives(Sx, Vx, a);
-            Sx += k[0] * dt;
-            Vx += k[1] * dt;
+            midpoint = solveMidpoint(Sx, Vx, a);
+            Sx = midpoint[0];
+            Vx = midpoint[1];
 
             Sx_o = Sx*Math.cos(-alpha)-Sy*Math.sin(-alpha);
             Sy_o = Sx*Math.sin(-alpha)+Sy*Math.cos(-alpha)+h;
 
-            k = derivatives(beta, w, eps);
-            beta += k[0] * dt;
-            w += k[1] * dt;
+            midpoint = solveMidpoint(beta, w, eps);
+            beta = midpoint[0];
+            w = midpoint[1];
 
             x = r*Math.cos(beta)+Sx_o;
             y = r*Math.sin(beta)+Sy_o;
