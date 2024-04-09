@@ -67,10 +67,10 @@ public class Main {
         double[] out = new double[2];
 
         double[] k = derivatives(Sx, Vx, a);
-        Sx += k[0] * dt/2;
-        Vx += k[1] * dt/2;
+        double Sx_tmp = Sx + k[0] * dt/2;
+        double Vx_tmp = Vx + k[1] * dt/2;
 
-        k = derivatives(Sx, Vx, a);
+        k = derivatives(Sx_tmp, Vx_tmp, a);
         out[0] = Sx + k[0] * dt;
         out[1] = Vx + k[1] * dt;
 
