@@ -4,26 +4,43 @@ import java.io.IOException;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
     static double r = 3;
     static double h = 20;
-    static double alpha = Math.toRadians(25);
+    static double a = 25;
+    static double alpha = Math.toRadians(a);
     static double d = h/Math.sin(alpha);
     static double dt = 0.1;
     static double m = 1;
     static final double g = 9.81;
-    static String sep;
+    static final String sep = String.valueOf(new DecimalFormatSymbols().getDecimalSeparator()).equals(",")?";":",";
 
     public static void main(String[] args) throws IOException {
-        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
-        String dsep = String.valueOf(dfs.getDecimalSeparator());
-        if (dsep.equals(",")) sep = ";";
-        else sep = ",";
-
+        Scanner scanner = new Scanner(System.in);
         System.out.println("Using standard configuration:");
-        System.out.println(SphericalObject.Ball(r, m));
-        System.out.println(SphericalObject.Sphere(r, m));
+        printConfiguration();
+        System.out.print("""
+                \nWould you like to change configuration?
+                Otherwise, standard configuration will be used.
+                Please enter (y/n):\s""");
+        if (scanner.next().equals("y")){
+            System.out.print("Enter object radius: ");
+            r = Double.parseDouble(scanner.next());
+            System.out.print("Enter object mass: ");
+            m = Double.parseDouble(scanner.next());
+            System.out.print("Enter degree of plane: ");
+            a = Double.parseDouble(scanner.next());
+            alpha = Math.toRadians(a);
+            System.out.print("Enter height of plane: ");
+            h = Double.parseDouble(scanner.next());
+            d = h/Math.sin(alpha);
+            System.out.print("Enter probing time in seconds: ");
+            dt = Double.parseDouble(scanner.next());
+            System.out.println("Data accepted. New configuration: ");
+            printConfiguration();
+        } else System.out.println("Standard configuration will be used.");
 
         List<String> ballData = calculateData(SphericalObject.Ball(r, m));
         List<String> sphereData = calculateData(SphericalObject.Sphere(r, m));
@@ -42,6 +59,15 @@ public class Main {
         DataWriter.writeDataToFile(combinedData, "data.csv");
     }
 
+    public static void printConfiguration(){
+        System.out.println("Configuration:" +
+                "\n\tObject radius: " + r + "[m]" +
+                "\n\tObject mass: " + m + "[kg]" +
+                "\n\tPlane height: " + h + "[m]" +
+                "\n\tPlane degree: " + a + "[°]" +
+                "\n\tProbing time: " + dt + "[s]");
+    }
+
     public static List<String> calculateData(SphericalObject object){
         List<String> data = new ArrayList<>();
         double t = 0, Sx = 0, Sy = object.r, Vx = 0,
@@ -55,8 +81,8 @@ public class Main {
                 Ek = m*Math.pow(Vx, 2)/2 + object.I*Math.pow(w, 2)/2,
                 Ec = Ep + Ek;
 
-        String title = object.label;
-        for (int i = 0; i < 13; i++) {
+        String title = object.label+sep+"h="+h+sep+"L="+h/Math.tan(alpha);
+        for (int i = 0; i < 11; i++) {
             title += sep;
         }
         data.add(title);
