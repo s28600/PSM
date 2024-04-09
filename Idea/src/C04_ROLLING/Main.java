@@ -37,10 +37,15 @@ public class Main {
                 a = g*Math.sin(alpha)/(1+object.I/(m*Math.pow(r, 2))),
                 Sx_o = Sx*Math.cos(-alpha)-Sy*Math.sin(-alpha),
                 Sy_o = Sx*Math.sin(-alpha)+Sy*Math.cos(-alpha)+h,
-                beta = Math.PI/2, w = 0, eps = -a/r;
+                beta = Math.PI/2, w = 0, eps = -a/r,
+                x = r*Math.cos(beta)+Sx_o,
+                y = r*Math.sin(beta)+Sy_o,
+                Ep = m*g*Sy_o,
+                Ek = m*Math.pow(Vx, 2)/2 + object.I*Math.pow(w, 2)/2,
+                Ec = Ep + Ek;
 
-        data.add("t"+sep+"Sx"+sep+"Sy"+sep+"Vx"+sep+"Sx_o"+sep+"Sy_o"+sep+"beta"+sep+"w"+sep+"eps");
-        data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps);
+        data.add("t"+sep+"Sx"+sep+"Sy"+sep+"Vx"+sep+"Sx_o"+sep+"Sy_o"+sep+"beta"+sep+"w"+sep+"eps"+sep+"x"+sep+"y"+sep+"Ep"+sep+"Ek"+sep+"Ec");
+        data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps+sep+x+sep+y+sep+Ep+sep+Ek+sep+Ec);
 
         double[] k;
         while (Sx < d){
@@ -57,7 +62,14 @@ public class Main {
             beta += k[0] * dt;
             w += k[1] * dt;
 
-            data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps);
+            x = r*Math.cos(beta)+Sx_o;
+            y = r*Math.sin(beta)+Sy_o;
+
+            Ep = m*g*Sy_o;
+            Ek = m*Math.pow(Vx, 2)/2 + object.I*Math.pow(w, 2)/2;
+            Ec = Ep + Ek;
+
+            data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps+sep+x+sep+y+sep+Ep+sep+Ek+sep+Ec);
         }
 
         return data;
