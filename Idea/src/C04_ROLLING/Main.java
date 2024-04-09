@@ -1,5 +1,10 @@
 package C04_ROLLING;
 
+import java.io.IOException;
+import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     static double r = 3;
     static double h = 20;
@@ -10,24 +15,45 @@ public class Main {
     static final double g = 9.81;
     static SphericalObject ball = SphericalObject.Ball(r, m);
     static SphericalObject sphere = SphericalObject.Sphere(r, m);
+    static String sep;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        final DecimalFormatSymbols dfs = new DecimalFormatSymbols();
+        String dsep = String.valueOf(dfs.getDecimalSeparator());
+        if (dsep.equals(",")) sep = ";";
+        else sep = ",";
+
         System.out.println("Using standard configuration:");
         System.out.println(ball);
         System.out.println(sphere);
 
-
+        List<String> ballData = calculateTrajectory(ball);
+        DataWriter.writeDataToFile(ballData, "data.csv");
     }
 
-    public void calculateTrajectory(SphericalObject object){
+    public static List<String> calculateTrajectory(SphericalObject object){
+        List<String> data = new ArrayList<>();
         double t = 0, Sx = 0, Sy = object.r, Vx = 0;
+        data.add(t+sep+Sx+sep+Sy+sep+Vx);
 
+        double[] k;
+        while (Sx < d){
+            t += dt;
+
+            k = derivatives(Vx, object);
+            Sx += k[0] * dt;
+            Vx += k[1] * dt;
+
+            data.add(t+sep+Sx+sep+Sy+sep+Vx);
+        }
+
+        return data;
     }
 
-    public static double[] derivatives(double Sx, double dVx, SphericalObject object){
+    public static double[] derivatives(double Vx, SphericalObject object){
         double[] out = new double[2];
-        out[0] = dVx;
-        out[1] = g*Math.sin(alpha)/(1+object.I/m*Math.pow(r, 2));
+        out[0] = Vx;
+        out[1] = g*Math.sin(alpha)/(1+object.I/(m*Math.pow(r, 2)));
         return out;
     }
 }
