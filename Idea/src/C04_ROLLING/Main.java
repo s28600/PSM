@@ -13,8 +13,6 @@ public class Main {
     static double dt = 0.1;
     static double m = 1;
     static final double g = 9.81;
-    static SphericalObject ball = SphericalObject.Ball(r, m);
-    static SphericalObject sphere = SphericalObject.Sphere(r, m);
     static String sep;
 
     public static void main(String[] args) throws IOException {
@@ -24,11 +22,24 @@ public class Main {
         else sep = ",";
 
         System.out.println("Using standard configuration:");
-        System.out.println(ball);
-        System.out.println(sphere);
+        System.out.println(SphericalObject.Ball(r, m));
+        System.out.println(SphericalObject.Sphere(r, m));
 
-        List<String> ballData = calculateData(ball);
-        DataWriter.writeDataToFile(ballData, "data.csv");
+        List<String> ballData = calculateData(SphericalObject.Ball(r, m));
+        List<String> sphereData = calculateData(SphericalObject.Sphere(r, m));
+        List<String> combinedData = new ArrayList<>();
+        String filler = "";
+        for (int i = 0; i < 15; i++) {
+            filler += sep;
+        }
+        for (int i = 0; i < sphereData.size(); i++) {
+            try{
+                combinedData.add(ballData.get(i)+sep+sep+sphereData.get(i));
+            } catch (IndexOutOfBoundsException e){
+                combinedData.add(filler+sphereData.get(i));
+            }
+        }
+        DataWriter.writeDataToFile(combinedData, "data.csv");
     }
 
     public static List<String> calculateData(SphericalObject object){
@@ -44,6 +55,11 @@ public class Main {
                 Ek = m*Math.pow(Vx, 2)/2 + object.I*Math.pow(w, 2)/2,
                 Ec = Ep + Ek;
 
+        String title = object.label;
+        for (int i = 0; i < 13; i++) {
+            title += sep;
+        }
+        data.add(title);
         data.add("t"+sep+"Sx"+sep+"Sy"+sep+"Vx"+sep+"Sx_o"+sep+"Sy_o"+sep+"beta"+sep+"w"+sep+"eps"+sep+"x"+sep+"y"+sep+"Ep"+sep+"Ek"+sep+"Ec");
         data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps+sep+x+sep+y+sep+Ep+sep+Ek+sep+Ec);
 
