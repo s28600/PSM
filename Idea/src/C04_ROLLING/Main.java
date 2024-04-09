@@ -27,17 +27,20 @@ public class Main {
         System.out.println(ball);
         System.out.println(sphere);
 
-        List<String> ballData = calculateTrajectory(ball);
+        List<String> ballData = calculateData(ball);
         DataWriter.writeDataToFile(ballData, "data.csv");
     }
 
-    public static List<String> calculateTrajectory(SphericalObject object){
+    public static List<String> calculateData(SphericalObject object){
         List<String> data = new ArrayList<>();
         double t = 0, Sx = 0, Sy = object.r, Vx = 0,
                 a = g*Math.sin(alpha)/(1+object.I/(m*Math.pow(r, 2))),
                 Sx_o = Sx*Math.cos(-alpha)-Sy*Math.sin(-alpha),
-                Sy_o = Sx*Math.sin(-alpha)+Sy*Math.cos(-alpha)+h;
-        data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o);
+                Sy_o = Sx*Math.sin(-alpha)+Sy*Math.cos(-alpha)+h,
+                beta = Math.PI/2, w = 0, eps = -a/r;
+
+        data.add("t"+sep+"Sx"+sep+"Sy"+sep+"Vx"+sep+"Sx_o"+sep+"Sy_o"+sep+"beta"+sep+"w"+sep+"eps");
+        data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps);
 
         double[] k;
         while (Sx < d){
@@ -50,17 +53,14 @@ public class Main {
             Sx_o = Sx*Math.cos(-alpha)-Sy*Math.sin(-alpha);
             Sy_o = Sx*Math.sin(-alpha)+Sy*Math.cos(-alpha)+h;
 
-            data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o);
+            k = derivatives(beta, w, eps);
+            beta += k[0] * dt;
+            w += k[1] * dt;
+
+            data.add(t+sep+Sx+sep+Sy+sep+Vx+sep+Sx_o+sep+Sy_o+sep+beta+sep+w+sep+eps);
         }
 
         return data;
-    }
-
-    public static double[] derivatives(double Sx, double Vx, double a){
-        double[] out = new double[2];
-        out[0] = Vx;
-        out[1] = a;
-        return out;
     }
 
     public static double[] solveMidpoint(double Sx, double Vx, double a){
@@ -74,6 +74,13 @@ public class Main {
         out[0] = Sx + k[0] * dt;
         out[1] = Vx + k[1] * dt;
 
+        return out;
+    }
+
+    public static double[] derivatives(double Sx, double Vx, double a){
+        double[] out = new double[2];
+        out[0] = Vx;
+        out[1] = a;
         return out;
     }
 }
