@@ -1,3 +1,5 @@
+package C01_TAILOR_SIN;
+
 import java.util.Scanner;
 
 public class Main {

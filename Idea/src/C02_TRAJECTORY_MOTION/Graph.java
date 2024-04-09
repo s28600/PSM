@@ -1,4 +1,4 @@
-package C02;
+package C02_TRAJECTORY_MOTION;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

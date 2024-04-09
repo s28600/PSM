@@ -1,4 +1,4 @@
-package C03;
+package C03_PENDULUM_RK4;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -161,23 +161,5 @@ public class Main {
         double Ec = Ep+Ek;
 
         return x+sep+y+sep+Ep+sep+Ek+sep+Ec;
-    }
-}
-
-class Point {
-    double a, w = 0, l;
-
-    public Point() {
-        a = Math.toRadians(45);
-        l = 1;
-    }
-
-    @Override
-    public String toString() {
-        return "Point{" +
-                ", a=" + a +
-                ", w=" + w +
-                ", l=" + l +
-                '}';
     }
 }
