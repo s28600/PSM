@@ -81,10 +81,11 @@ public class Main {
         Double t = (double) 0, a = point.a, w = point.w;
         data.add(t+sep+a+sep+w+sep+positionEnergy(point.l, w, a));
 
+        double[] k;
         while(t<10) {
             t += dt;
 
-            double[] k = derivatives(a, w, point);
+            k = derivatives(a, w, point);
             double a_tmp = a + k[0] * dt/2;
             double w_tmp = w + k[1] * dt/2;
 
