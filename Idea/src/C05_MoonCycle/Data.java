@@ -9,9 +9,5 @@ public class Data {
             Rzs = 1.5*Math.pow(10, 8)*1000, //Odległość Ziemia-Słońce [m]
             Rzk = 3.844*Math.pow(10, 5)*1000; //Odległość Ziemia-Księżyc [m]
 
-    public double dt;
-
-    public Data(double dt) {
-        this.dt = dt;
-    }
+    public static double dt = 500;
 }
