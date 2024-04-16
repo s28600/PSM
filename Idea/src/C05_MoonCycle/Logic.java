@@ -13,43 +13,26 @@ public class Logic {
                 x = 0,
                 y = Data.Rzk,
                 Vx = Math.sqrt(Data.G*Data.Mz/Data.Rzk),
-                Vy = 0,
-                Wx = 0-x,
-                Wy = 0-y,
-                Wd = Math.sqrt(Math.pow(Wx, 2)+Math.pow(Wy, 2)),
-                Ux = Wx/Wd,
-                Uy = Wy/Wd,
-                Ak = Data.G*Data.Mz/Math.pow(Wd, 2),
-                Akx = Ak * Ux,
-                Aky = Ak * Uy,
-                Dx = Vx * Data.dt,
-                Dy = Vy * Data.dt,
-                DVx = Akx * Data.dt,
-                DVy = Aky * Data.dt;
+                Vy = 0;
 
-        output.add(t+sep+x+sep+y+sep+Vx+sep+Vy+sep+Wx+sep+Wy+sep+Wd+sep+Ux+sep+Uy+sep+Ak+sep+Akx+sep+Aky+sep+Dx+sep+Dy+sep+DVx+sep+DVy+sep);
+        output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
 
+        double[] midpoint;
         while (t < 5381500){
             t += Data.dt;
-            x += Dx;
-            y += Dy;
-            Vx += DVx;
-            Vy += DVy;
 
-            Wx = 0-x;
-            Wy = 0-y;
-            Wd = Math.sqrt(Math.pow(Wx, 2)+Math.pow(Wy, 2));
-            Ux = Wx/Wd;
-            Uy = Wy/Wd;
-            Ak = Data.G*Data.Mz/Math.pow(Wd, 2);
-            Akx = Ak * Ux;
-            Aky = Ak * Uy;
-            Dx = Vx * Data.dt;
-            Dy = Vy * Data.dt;
-            DVx = Akx * Data.dt;
-            DVy = Aky * Data.dt;
+            double[] Ak = getAxisAcceleration(x, y);
+            double Akx = Ak[0], Aky = Ak[1];
 
-            output.add(t+sep+x+sep+y+sep+Vx+sep+Vy+sep+Wx+sep+Wy+sep+Wd+sep+Ux+sep+Uy+sep+Ak+sep+Akx+sep+Aky+sep+Dx+sep+Dy+sep+DVx+sep+DVy+sep);
+            midpoint = solveMidpoint(x, Vx, Akx);
+            x = midpoint[0];
+            Vx = midpoint[1];
+
+            midpoint = solveMidpoint(y, Vy, Aky);
+            y = midpoint[0];
+            Vy = midpoint[1];
+
+            output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
         }
 
         return output;
@@ -76,7 +59,21 @@ public class Logic {
         return out;
     }
 
-    public double getAxisAcceleration(){
-        return 0;
+    public static double[] getAxisAcceleration(double x, double y){
+        double[] output = new double[2];
+
+        double Wx = 0-x,
+                Wy = 0-y,
+                Wd = Math.sqrt(Math.pow(Wx, 2)+Math.pow(Wy, 2)),
+                Ux = Wx/Wd,
+                Uy = Wy/Wd,
+                Ak = Data.G*Data.Mz/Math.pow(Wd, 2),
+                Akx = Ak * Ux,
+                Aky = Ak * Uy;
+
+        output[0] = Akx;
+        output[1] = Aky;
+
+        return output;
     }
 }
