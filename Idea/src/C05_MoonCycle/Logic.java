@@ -6,43 +6,30 @@ import java.util.List;
 
 public class Logic {
     static final String sep = String.valueOf(new DecimalFormatSymbols().getDecimalSeparator()).equals(",")?";":",";
-    public static List<String> calculate(){
+    public static List<String> calculate(SolarObjectsPerspective perspective){
         List<String> output = new ArrayList<>();
 
         double t = 0,
                 x = 0,
-                y = Data.Rzk,
-                Vx = Math.sqrt(Data.G*Data.Mz/Data.Rzk),
+                y = perspective==SolarObjectsPerspective.MoonAroundEarth?Data.Rzk:Data.Rzs,
+                Vx = perspective==SolarObjectsPerspective.MoonAroundEarth?(Math.sqrt(Data.G*Data.Mz/Data.Rzk)):(Math.sqrt(Data.G*Data.Ms/Data.Rzs)),
                 Vy = 0;
 
         output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
 
-        double[] k;
-        while (t < 5381500){
+        double loop = y;
+        double[] midpoint;
+        do {
             t += Data.dt;
 
-            double[] Ak = getAxisAcceleration(x, y);
-            double Akx = Ak[0], Aky = Ak[1];
-
-            k = derivatives(x, Vx, Akx);
-            double x_tmp = x + k[0] * Data.dt/2;
-            double Vx_tmp = Vx + k[1] * Data.dt/2;
-            k = derivatives(y, Vy, Aky);
-            double y_tmp = y + k[0] * Data.dt/2;
-            double Vy_tmp = Vy + k[1] * Data.dt/2;
-
-            Ak = getAxisAcceleration(x_tmp, y_tmp);
-            Akx = Ak[0]; Aky = Ak[1];
-
-            k = derivatives(x_tmp, Vx_tmp, Akx);
-            x += k[0] * Data.dt;
-            Vx += k[1] * Data.dt;
-            k = derivatives(y_tmp, Vy_tmp, Aky);
-            y += k[0] * Data.dt;
-            Vy += k[1] * Data.dt;
+            midpoint = solveMidpoint(x, y, Vx, Vy);
+            x = midpoint[0];
+            y = midpoint[1];
+            Vx = midpoint[2];
+            Vy = midpoint[3];
 
             output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
-        }
+        } while (y < loop);
 
         return output;
     }
