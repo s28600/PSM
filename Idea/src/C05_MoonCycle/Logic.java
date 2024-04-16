@@ -17,20 +17,29 @@ public class Logic {
 
         output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
 
-        double[] midpoint;
+        double[] k;
         while (t < 5381500){
             t += Data.dt;
 
             double[] Ak = getAxisAcceleration(x, y);
             double Akx = Ak[0], Aky = Ak[1];
 
-            midpoint = solveMidpoint(x, Vx, Akx);
-            x = midpoint[0];
-            Vx = midpoint[1];
+            k = derivatives(x, Vx, Akx);
+            double x_tmp = x + k[0] * Data.dt/2;
+            double Vx_tmp = Vx + k[1] * Data.dt/2;
+            k = derivatives(y, Vy, Aky);
+            double y_tmp = y + k[0] * Data.dt/2;
+            double Vy_tmp = Vy + k[1] * Data.dt/2;
 
-            midpoint = solveMidpoint(y, Vy, Aky);
-            y = midpoint[0];
-            Vy = midpoint[1];
+            Ak = getAxisAcceleration(x_tmp, y_tmp);
+            Akx = Ak[0]; Aky = Ak[1];
+
+            k = derivatives(x_tmp, Vx_tmp, Akx);
+            x += k[0] * Data.dt;
+            Vx += k[1] * Data.dt;
+            k = derivatives(y_tmp, Vy_tmp, Aky);
+            y += k[0] * Data.dt;
+            Vy += k[1] * Data.dt;
 
             output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
         }
@@ -38,16 +47,33 @@ public class Logic {
         return output;
     }
 
-    public static double[] solveMidpoint(double position, double speed, double acceleration){
-        double[] out = new double[2];
+    public static double[] solveMidpoint(double x, double y, double Vx, double Vy){
+        double[] out = new double[4];
 
-        double[] k = derivatives(position, speed, acceleration);
-        double position_tmp = position + k[0] * Data.dt/2;
-        double speed_tmp = speed + k[1] * Data.dt/2;
+        double[] Ak = getAxisAcceleration(x, y);
+        double Akx = Ak[0], Aky = Ak[1];
 
-        k = derivatives(position_tmp, speed_tmp, acceleration);
-        out[0] = position + k[0] * Data.dt;
-        out[1] = speed + k[1] * Data.dt;
+        double[] k = derivatives(x, Vx, Akx);
+        double x_tmp = x + k[0] * Data.dt/2;
+        double Vx_tmp = Vx + k[1] * Data.dt/2;
+        k = derivatives(y, Vy, Aky);
+        double y_tmp = y + k[0] * Data.dt/2;
+        double Vy_tmp = Vy + k[1] * Data.dt/2;
+
+        Ak = getAxisAcceleration(x_tmp, y_tmp);
+        Akx = Ak[0]; Aky = Ak[1];
+
+        k = derivatives(x_tmp, Vx_tmp, Akx);
+        x += k[0] * Data.dt;
+        Vx += k[1] * Data.dt;
+        k = derivatives(y_tmp, Vy_tmp, Aky);
+        y += k[0] * Data.dt;
+        Vy += k[1] * Data.dt;
+
+        out[0] = x;
+        out[1] = y;
+        out[2] = Vx;
+        out[3] = Vy;
 
         return out;
     }
