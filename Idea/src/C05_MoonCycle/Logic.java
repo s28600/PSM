@@ -17,9 +17,8 @@ public class Logic {
 
         output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
 
-        double loop = y;
         double[] midpoint;
-        do {
+        while (t < 33026400) {
             t += Data.dt;
 
             midpoint = solveMidpoint(x, y, Vx, Vy);
@@ -29,7 +28,7 @@ public class Logic {
             Vy = midpoint[3];
 
             output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
-        } while (y < loop);
+        }
 
         return output;
     }
