@@ -13,8 +13,8 @@ public class Logic {
         this.perspective = perspective;
     }
 
-    public List<String> calculate(){
-        List<String> output = new ArrayList<>();
+    public List<double[]> calculate(){
+        List<double[]> output = new ArrayList<>();
 
         double t = 0,
                 x = 0,
@@ -22,8 +22,8 @@ public class Logic {
                 Vx = perspective==SolarObjectsPerspective.MoonAroundEarth?(Math.sqrt(Data.G*Data.Mz/Data.Rzk)):(Math.sqrt(Data.G*Data.Ms/Data.Rzs)),
                 Vy = 0;
 
-        output.add("t"+sep+"x"+sep+"y");
-        output.add(t+sep+x+sep+y);
+        double[] entry = new double[]{t,x,y};
+        output.add(entry);
 
         double[] midpoint;
         while (t < endTime) {
@@ -35,7 +35,8 @@ public class Logic {
             Vx = midpoint[2];
             Vy = midpoint[3];
 
-            output.add(t+sep+x+sep+y);
+            entry = new double[]{t,x,y};
+            output.add(entry);
         }
 
         return output;
