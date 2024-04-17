@@ -1,4 +1,4 @@
-package C05_MoonCycle;
+package C05_SolarCycle;
 
 public class Data {
     public static final double

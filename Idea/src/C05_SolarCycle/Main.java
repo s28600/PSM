@@ -1,8 +1,7 @@
-package C05_MoonCycle;
+package C05_SolarCycle;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class Main {
