@@ -22,7 +22,8 @@ public class Logic {
                 Vx = perspective==SolarObjectsPerspective.MoonAroundEarth?(Math.sqrt(Data.G*Data.Mz/Data.Rzk)):(Math.sqrt(Data.G*Data.Ms/Data.Rzs)),
                 Vy = 0;
 
-        output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
+        output.add("t"+sep+"x"+sep+"y");
+        output.add(t+sep+x+sep+y);
 
         double[] midpoint;
         while (t < endTime) {
@@ -34,7 +35,7 @@ public class Logic {
             Vx = midpoint[2];
             Vy = midpoint[3];
 
-            output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
+            output.add(t+sep+x+sep+y);
         }
 
         return output;
