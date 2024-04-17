@@ -6,7 +6,14 @@ import java.util.List;
 
 public class Logic {
     static final String sep = String.valueOf(new DecimalFormatSymbols().getDecimalSeparator()).equals(",")?";":",";
-    public static List<String> calculate(SolarObjectsPerspective perspective){
+    static final double endTime = 31622400; //Seconds in year
+    SolarObjectsPerspective perspective;
+
+    public Logic(SolarObjectsPerspective perspective) {
+        this.perspective = perspective;
+    }
+
+    public List<String> calculate(){
         List<String> output = new ArrayList<>();
 
         double t = 0,
@@ -18,7 +25,7 @@ public class Logic {
         output.add(t+sep+x+sep+y+sep+Vx+sep+Vy);
 
         double[] midpoint;
-        while (t < 33026400) {
+        while (t < endTime) {
             t += Data.dt;
 
             midpoint = solveMidpoint(x, y, Vx, Vy);
@@ -33,7 +40,7 @@ public class Logic {
         return output;
     }
 
-    public static double[] solveMidpoint(double x, double y, double Vx, double Vy){
+    public double[] solveMidpoint(double x, double y, double Vx, double Vy){
         double[] out = new double[4];
 
         double[] Ak = getAxisAcceleration(x, y);
@@ -64,14 +71,14 @@ public class Logic {
         return out;
     }
 
-    public static  double[] derivatives(double position, double speed, double acceleration){
+    public  double[] derivatives(double position, double speed, double acceleration){
         double[] out = new double[2];
         out[0] = speed;
         out[1] = acceleration;
         return out;
     }
 
-    public static double[] getAxisAcceleration(double x, double y){
+    public double[] getAxisAcceleration(double x, double y){
         double[] output = new double[2];
 
         double Wx = 0-x,
@@ -79,7 +86,7 @@ public class Logic {
                 Wd = Math.sqrt(Math.pow(Wx, 2)+Math.pow(Wy, 2)),
                 Ux = Wx/Wd,
                 Uy = Wy/Wd,
-                Ak = Data.G*Data.Mz/Math.pow(Wd, 2),
+                Ak = Data.G*(perspective==SolarObjectsPerspective.MoonAroundEarth?Data.Mz:Data.Ms)/Math.pow(Wd, 2),
                 Akx = Ak * Ux,
                 Aky = Ak * Uy;
 
