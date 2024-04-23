@@ -1,10 +1,11 @@
 package C06_StringMotion;
 
-import java.util.Arrays;
+import java.io.IOException;
+import java.util.List;
 
 public class Main {
-    public static void main(String[] args) {
-        StringData stringData = new StringData();
-        System.out.println(Arrays.toString(stringData.string));
+    public static void main(String[] args) throws IOException {
+        List<String> data = Util.calculate();
+        MyFileWriter.writeDataToFile(data, "data.csv");
     }
 }
