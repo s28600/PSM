@@ -14,37 +14,30 @@ public class Util {
         List<String> out = new ArrayList<>();
 
         double t = 0;
-        double[] pointsPosition = new double[stringData.string.length];
-        double[] pointsSpeed = new double[stringData.string.length];
-        double[] pointsAcceleration = new double[stringData.string.length];
-        for (int i = 1; i < stringData.string.length-1; i++) {
-            pointsPosition[i] = Math.sin(stringData.string[i])/10000;
-        }
-        for (int i = 1; i < pointsAcceleration.length-1; i++) {
-            pointsAcceleration[i] = (pointsPosition[i-1]-2*pointsPosition[i]+pointsPosition[i+1])/Math.pow(stringData.dx, 2);
+        double[] pointsPosition = new double[stringData.pointsStartingPosition.length];
+        double[] pointsSpeed = new double[stringData.pointsStartingPosition.length];
+        double[] pointsAcceleration = new double[stringData.pointsStartingPosition.length];
+        for (int i = 1; i < stringData.pointsStartingPosition.length-1; i++) {
+            pointsPosition[i] = Math.sin(stringData.pointsStartingPosition[i])/10000;
         }
 
-        out.add(pointsToString(t, "xi", stringData.string));
+        out.add(pointsToString(t, "xi", stringData.pointsStartingPosition));
         out.add(pointsToString(t, "u", pointsPosition));
-        out.add(pointsToString(t, "v", pointsSpeed));
-        out.add(pointsToString(t, "a", pointsAcceleration));
 
         while (t < 2){
             t += dt;
 
+            for (int i = 1; i < pointsAcceleration.length-1; i++) {
+                pointsAcceleration[i] = (pointsPosition[i-1]-2*pointsPosition[i]+pointsPosition[i+1])/Math.pow(stringData.dx, 2);
+            }
             for (int i = 1; i < pointsPosition.length-1; i++) {
                 pointsPosition[i] += pointsSpeed[i]*dt;
             }
             for (int i = 1; i < pointsSpeed.length-1; i++) {
                 pointsSpeed[i] += pointsAcceleration[i]*dt;
             }
-            for (int i = 1; i < pointsAcceleration.length-1; i++) {
-                pointsAcceleration[i] = (pointsPosition[i-1]-2*pointsPosition[i]+pointsPosition[i+1])/Math.pow(stringData.dx, 2);
-            }
 
             out.add(pointsToString(t, "u", pointsPosition));
-            out.add(pointsToString(t, "v", pointsSpeed));
-            out.add(pointsToString(t, "a", pointsAcceleration));
         }
 
         return out;
