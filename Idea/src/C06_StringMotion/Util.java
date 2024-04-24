@@ -24,14 +24,26 @@ public class Util {
         out.add(pointsToString(t, "xi", stringData.pointsStartingPosition));
         out.add(pointsToString(t, "u", pointsPosition));
 
-        while (t < 2){
+        while (t < 3){
             t += dt;
 
             for (int i = 1; i < pointsAcceleration.length-1; i++) {
                 pointsAcceleration[i] = (pointsPosition[i-1]-2*pointsPosition[i]+pointsPosition[i+1])/Math.pow(stringData.dx, 2);
             }
+            double[] pointsPosition_tmp = new double[pointsPosition.length];
+            for (int i = 1; i < pointsPosition_tmp.length-1; i++) {
+                pointsPosition_tmp[i] = pointsPosition[i] + pointsSpeed[i]*dt/2;
+            }
+            double[] pointsSpeed_tmp = new double[pointsSpeed.length];
+            for (int i = 1; i < pointsSpeed_tmp.length-1; i++) {
+                pointsSpeed_tmp[i] = pointsSpeed[i] + pointsAcceleration[i]*dt/2;
+            }
+            for (int i = 1; i < pointsAcceleration.length-1; i++) {
+                pointsAcceleration[i] = (pointsPosition_tmp[i-1]-2*pointsPosition_tmp[i]+pointsPosition_tmp[i+1])/Math.pow(stringData.dx, 2);
+            }
+
             for (int i = 1; i < pointsPosition.length-1; i++) {
-                pointsPosition[i] += pointsSpeed[i]*dt;
+                pointsPosition[i] += pointsSpeed_tmp[i]*dt;
             }
             for (int i = 1; i < pointsSpeed.length-1; i++) {
                 pointsSpeed[i] += pointsAcceleration[i]*dt;
