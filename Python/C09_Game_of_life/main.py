@@ -81,10 +81,11 @@ def process_cell(board, x, y):
 # pygame setup
 pygame.init()
 scale = 10
-pygame.display.set_caption("Game of life")
+pygame.display.set_caption("Game of life (click P to pause and C to configure new rules while paused)")
 screen = pygame.display.set_mode((size * scale, size * scale))
 clock = pygame.time.Clock()
 running = True
+pause = False
 dt = 0
 
 while running:
@@ -94,20 +95,30 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # fill the screen with a color to wipe away anything from last frame
-    screen.fill("white", (0, 0, screen.get_width(), screen.get_height()))
+    if not pause:
+        # fill the screen with a color to wipe away anything from last frame
+        screen.fill("white", (0, 0, screen.get_width(), screen.get_height()))
 
-    for y in range(len(board)):
-        for x in range(len(board[y])):
-            process_cell(board, x, y)
-            if board[y][x] == 1:
-                pygame.draw.rect(screen, "black", (x * scale, y * scale, scale, scale))
+        for y in range(len(board)):
+            for x in range(len(board[y])):
+                process_cell(board, x, y)
+                if board[y][x] == 1:
+                    pygame.draw.rect(screen, "black", (x * scale, y * scale, scale, scale))
 
-    # flip() the display to put your work on screen
-    pygame.display.flip()
+        # flip() the display to put your work on screen
+        pygame.display.flip()
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_p]:
+        pause = not pause
+
+    if pause:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_c]:
+            alive_rules, dead_rules = read_rules()
 
     # limit FPS to 15
     # dt is delta time in seconds since last frame, used for framerate-independent physics.
-    dt = clock.tick(15)
+    dt = clock.tick(15)/1000
 
 pygame.quit()
