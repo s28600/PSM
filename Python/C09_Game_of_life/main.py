@@ -1,4 +1,18 @@
+import random
+
 import pygame
+
+# game of life setup
+size = 40
+rules = "23/3"
+alive_rules = [int(num) for num in (rules.split("/")[0])]
+dead_rules = [int(num) for num in (rules.split("/")[1])]
+board = [[random.randint(0, 1) for _ in range(size)] for _ in range(size)]
+
+'''
+for row in board:
+    print(row)
+'''
 
 # pygame setup
 pygame.init()
@@ -6,7 +20,6 @@ screen = pygame.display.set_mode((1280, 720))
 clock = pygame.time.Clock()
 running = True
 dt = 0
-
 player_pos = pygame.Vector2(screen.get_width() / 2, screen.get_height() / 2)
 
 while running:
@@ -20,6 +33,7 @@ while running:
     screen.fill("purple")
 
     pygame.draw.circle(screen, "red", player_pos, 40)
+    pygame.draw.rect(screen, "black", (player_pos.x, player_pos.y, 20, 20))
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_w]:
