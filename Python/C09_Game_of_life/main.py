@@ -1,12 +1,41 @@
 import random
-
 import pygame
+import re
+import pygame_menu
+
+
+def read_num(text):
+    try:
+        num = int(input(text))
+        if not (3 <= num <= 100):
+            raise ValueError
+        return num
+    except ValueError:
+        print("Invalid input, please enter integer between 3 and 100")
+        return read_num(text)
+
+
+def read_rules():
+    rules = input("Enter rules in following format {numbers}/{numbers}, max 9 per side, from 0 to 8, no duplicates: ")
+
+    # check if input matches requirement
+    pattern = re.compile("^[0-8]+/[0-8]+$")
+    if not pattern.match(rules):
+        return read_rules()
+
+    alive_rules = [int(num) for num in (rules.split("/")[0])]
+    dead_rules = [int(num) for num in (rules.split("/")[1])]
+
+    # check if rules groups contain duplicates (and length by proxy)
+    if len(alive_rules) != len(set(alive_rules)) or len(dead_rules) != len(set(dead_rules)):
+        return read_rules()
+
+    return alive_rules, dead_rules
+
 
 # game of life setup
-size = 80
-rules = "23/3"
-alive_rules = [int(num) for num in (rules.split("/")[0])]
-dead_rules = [int(num) for num in (rules.split("/")[1])]
+size = read_num("Enter the size of the board: ")
+alive_rules, dead_rules = read_rules()
 board = [[random.randint(0, 1) for _ in range(size)] for _ in range(size)]
 
 
@@ -52,6 +81,7 @@ def process_cell(board, x, y):
 # pygame setup
 pygame.init()
 scale = 10
+pygame.display.set_caption("Game of life")
 screen = pygame.display.set_mode((size * scale, size * scale))
 clock = pygame.time.Clock()
 running = True
@@ -65,20 +95,19 @@ while running:
             running = False
 
     # fill the screen with a color to wipe away anything from last frame
-    screen.fill("white")
+    screen.fill("white", (0, 0, screen.get_width(), screen.get_height()))
 
     for y in range(len(board)):
         for x in range(len(board[y])):
             process_cell(board, x, y)
             if board[y][x] == 1:
-                pygame.draw.rect(screen, "black", (y * scale, x * scale, scale, scale))
+                pygame.draw.rect(screen, "black", (x * scale, y * scale, scale, scale))
 
     # flip() the display to put your work on screen
     pygame.display.flip()
 
-    # limits FPS to 60
-    # dt is delta time in seconds since last frame, used for framerate-
-    # independent physics.
-    dt = clock.tick(15) / 1000
+    # limit FPS to 15
+    # dt is delta time in seconds since last frame, used for framerate-independent physics.
+    dt = clock.tick(15)
 
 pygame.quit()
