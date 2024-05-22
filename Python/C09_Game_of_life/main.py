@@ -12,18 +12,47 @@ board = [[random.randint(0, 1) for _ in range(size)] for _ in range(size)]
 
 def process_cell(board, x, y):
     alive_neighbours = 0
-    left = x-1
+
+    left = x - 1
     if left < 0:
-        left = len(board)-1
+        left = len(board) - 1
+    up = y - 1
+    if up < 0:
+        up = len(board) - 1
+    right = x + 1
+    if right > len(board) - 1:
+        right = 0
+    down = y + 1
+    if down > len(board) - 1:
+        down = 0
 
+    if board[up][left] == 1:
+        alive_neighbours += 1
+    if board[up][x] == 1:
+        alive_neighbours += 1
+    if board[up][right] == 1:
+        alive_neighbours += 1
+    if board[y][left] == 1:
+        alive_neighbours += 1
+    if board[y][right] == 1:
+        alive_neighbours += 1
+    if board[down][left] == 1:
+        alive_neighbours += 1
+    if board[down][x] == 1:
+        alive_neighbours += 1
+    if board[down][right] == 1:
+        alive_neighbours += 1
 
-for row in board:
-    print(row)
+    if board[y][x] == 1 and alive_neighbours not in alive_rules:
+        board[y][x] = 0
+    if board[y][x] == 0 and alive_neighbours in dead_rules:
+        board[y][x] = 1
+
 
 # pygame setup
 pygame.init()
 scale = 10
-screen = pygame.display.set_mode((size*scale, size*scale))
+screen = pygame.display.set_mode((size * scale, size * scale))
 clock = pygame.time.Clock()
 running = True
 dt = 0
@@ -40,6 +69,7 @@ while running:
 
     for y in range(len(board)):
         for x in range(len(board[y])):
+            process_cell(board, x, y)
             if board[y][x] == 1:
                 pygame.draw.rect(screen, "black", (y * scale, x * scale, scale, scale))
 
@@ -49,6 +79,6 @@ while running:
     # limits FPS to 60
     # dt is delta time in seconds since last frame, used for framerate-
     # independent physics.
-    dt = clock.tick(60) / 1000
+    dt = clock.tick(15) / 1000
 
 pygame.quit()
