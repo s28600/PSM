@@ -1,7 +1,6 @@
 import random
 import pygame
 import re
-import pygame_menu
 
 
 def read_num(text):
@@ -95,6 +94,10 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_p]:
+        pause = not pause
+
     if not pause:
         # fill the screen with a color to wipe away anything from last frame
         screen.fill("white", (0, 0, screen.get_width(), screen.get_height()))
@@ -107,12 +110,7 @@ while running:
 
         # flip() the display to put your work on screen
         pygame.display.flip()
-
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_p]:
-        pause = not pause
-
-    if pause:
+    else:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_c]:
             alive_rules, dead_rules = read_rules()
